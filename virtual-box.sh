@@ -1,0 +1,11 @@
+
+rkspace Setup: Mac #
+###########################
+
+# Install Virtual Box
+
+brew cask install virtualbox
+
+brew cask install vagrant
+
+brew cask install vagrant-manager
