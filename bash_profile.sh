@@ -13,14 +13,10 @@ alias home='cd ~/Desktop'
 
 # Application Commands
 alias phone='open/Applications/Xvode.app/Contents/Developer/Applications/Simulator.app'
-alias simpleServer = 'python -m SimpleHTTPServer 1337'
+alias server = 'python3 -m http.server'
 alias chrom='open -a "Google Chome" --args'
 alias atom='atom .'
 alias open='open .'
-
-# Python
-alias python='python3'
-alias pip='pip3'
 
 # Load NVM
 export NVM_DIR="HOME/.nvm"
