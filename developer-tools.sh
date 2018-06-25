@@ -72,6 +72,15 @@ else
     npm -v
 fi
 
+# Install Bower
+if ! command bower -v > /dev/null; then
+    echo installing bower ...
+    brew install bower
+else
+    echo bower installed, version:
+    bower -v
+fi
+
 # Install Ember
 if ! command ember -v > /dev/null; then
     echo Installing ember ...
