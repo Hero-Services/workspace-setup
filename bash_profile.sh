@@ -1,9 +1,7 @@
 # !/bin/bash
 
-# on startup
-if command -v tmux>/dev/null; then
-    [[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux
-fi
+# on startup start tmux
+tmux
 
 # General
 export PS1="⚓  [ \u ]:\W $ "
