@@ -1,7 +1,7 @@
 # !/bin/bash
 
 # on startup start tmux
-tmux
+[[ $TERM != "screen" ]] && exec tmux
 
 # General
 export PS1="⚓  [ \u ]:\W $ "
