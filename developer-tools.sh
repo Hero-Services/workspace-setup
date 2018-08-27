@@ -72,6 +72,15 @@ else
     npm -v
 fi
 
+# Install Yarn
+if ! command yarn -v > /dev/null; then
+    echo Installing yarn ...
+    brew install yarn
+else
+    echo yarn installed, version:
+    yarn -v
+fi
+
 # Install Bower
 if ! command bower -v > /dev/null; then
     echo installing bower ...
