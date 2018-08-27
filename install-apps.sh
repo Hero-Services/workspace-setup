@@ -18,3 +18,4 @@ brew cask install spotify
 
 brew cask install android-studio
 
+brew cask install filezilla
