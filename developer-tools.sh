@@ -152,6 +152,15 @@ echo developer tools installed
 # Install Iterm2
 brew cask install iterm2
 
+# terminal settings | create bash_profile
 cat bash_profile.sh > ~/.bash_profile.sh
 source ~/.bash_profile
 
+# tmux settings | create tmux.conf
+cat tmux.conf > ~/.tmux.conf
+
+# vim settings | create .vimrc
+cat .vimrc > ~/.vimrc
+# vim package manager ~ pathogen
+mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
