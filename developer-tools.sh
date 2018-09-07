@@ -9,6 +9,10 @@
 
 echo "Setting up developer tools ..."
 
+# Configure .gitignore
+git config --global core.excludesfile ~/.gitignore
+echo *.DS_Store >> ~/.gitignore
+
 # Install Xcode Command Line Tools
 if ! command xcode-select -v > /dev/null; then
     echo Installing Xcode command line tools ...
