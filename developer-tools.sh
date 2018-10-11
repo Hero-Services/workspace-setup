@@ -169,6 +169,9 @@ brew cask install iterm2
 cat bash_profile.sh > ~/.bash_profile.sh
 source ~/.bash_profile
 
+# link .nvm
+source ~/.nvm/nvm.sh
+
 # tmux settings | create tmux.conf
 cat tmux.conf > ~/.tmux.conf
 
