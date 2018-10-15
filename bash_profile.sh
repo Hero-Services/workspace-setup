@@ -8,8 +8,8 @@ alias home='cd ~/Desktop'
 
 # Application Commands
 alias phone='open/Applications/Xvode.app/Contents/Developer/Applications/Simulator.app'
-alias server = 'python3 -m http.server'
-alias chrom='open -a "Google Chome" --args'
+alias server='python3 -m http.server'
+alias chrome='open -a "Google Chome" --args'
 alias atom='atom .'
 alias open='open .'
 
