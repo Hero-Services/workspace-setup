@@ -14,8 +14,8 @@ alias atom='atom .'
 alias open='open .'
 
 # Load NVM
-export NVM_DIR="HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh
 
 # Setting PATH for Python 3.6
 PATH="/Library/Frameworks/Python.framework/Versions/3.6/bin:${PATH}"
