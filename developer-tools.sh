@@ -32,12 +32,11 @@ else
 fi
 
 # Install Tmux
-if ! command tmux -v > /dev/null; then
+if type tmux >/dev/null 2>/dev/null; then
+    echo tmux already installed
+else
     echo Installing tmux ...
     brew install tmux
-else
-    echo tmux installed, version:
-    tmux -v
 fi
 
 # Install Homebrew Cask
