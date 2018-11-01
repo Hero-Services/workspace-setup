@@ -40,12 +40,12 @@ else
 fi
 
 # Install Homebrew Cask
-if ! command brew cask --version > /dev/null; then
+if ! brew info cask &>/dev/null; then
     echo installing brew cask ...
     brew cask
 else
     echo brew cask installed, version:
-    echo brew cask --version
+    brew info cask
 fi
 
 # Install Node
