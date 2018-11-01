@@ -45,7 +45,7 @@ if ! command brew cask --version > /dev/null; then
     brew cask
 else
     echo brew cask installed, version:
-    echo brew cask -v
+    echo brew cask --version
 fi
 
 # Install Node
