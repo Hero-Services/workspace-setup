@@ -138,7 +138,7 @@ echo ###
 xcode-select --version
 brew -v
 echo ###
-brew cask --version
+brew info cask
 echo ###
 node -v
 echo ###
