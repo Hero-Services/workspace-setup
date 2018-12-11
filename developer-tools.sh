@@ -57,6 +57,10 @@ else
     node -v
 fi
 
+# terminal settings | create bash_profile
+cat bash_profile.sh > ~/.bash_profile.sh
+source ~/.bash_profile
+
 # Install Node Version Manager (NVM)
 if ! command nvm --version > /dev/null; then
     echo Installing nvm ...
@@ -163,10 +167,6 @@ echo developer tools installed
 
 # Install Iterm2
 brew cask install iterm2
-
-# terminal settings | create bash_profile
-cat bash_profile.sh > ~/.bash_profile.sh
-source ~/.bash_profile
 
 # link .nvm
 source ~/.nvm/nvm.sh
