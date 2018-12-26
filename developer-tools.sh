@@ -9,10 +9,6 @@
 
 echo "Setting up developer tools ..."
 
-# Configure .gitignore
-git config --global core.excludesfile ~/.gitignore
-echo *.DS_Store >> ~/.gitignore
-
 # Install Xcode Command Line Tools
 if ! command xcode-select -v > /dev/null; then
     echo Installing Xcode command line tools ...
@@ -57,14 +53,14 @@ else
     node -v
 fi
 
-# terminal settings | create bash_profile
-cat bash_profile.sh > ~/.bash_profile.sh
-source ~/.bash_profile
-
 # Install Node Version Manager (NVM)
 if ! command nvm --version > /dev/null; then
     echo Installing nvm ...
+
+    # install
     brew install nvm
+    # link .nvm
+    source ~/.nvm/nvm.sh
 else
     echo nvm installed, version:
     nvm --version
@@ -167,17 +163,3 @@ echo developer tools installed
 
 # Install Iterm2
 brew cask install iterm2
-
-# link .nvm
-source ~/.nvm/nvm.sh
-
-# tmux settings | create tmux.conf
-cat tmux.conf > ~/.tmux.conf
-
-# vim settings | create .vimrc
-cat .vimrc > ~/.vimrc
-# vim package manager ~ pathogen
-mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-# install NERDTree
-git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree
