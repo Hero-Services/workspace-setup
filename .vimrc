@@ -1,9 +1,5 @@
-execute pathogen#infect()
 syntax on
 filetype plugin indent on
-
-" Nerd Tree on vim start
-" autocmd VimEnter * NERDTree
 
 " Enable mouse clicks
 :set mouse=a
