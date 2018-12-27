@@ -56,11 +56,7 @@ fi
 # Install Node Version Manager (NVM)
 if ! command nvm --version > /dev/null; then
     echo Installing nvm ...
-
-    # install
     brew install nvm
-    # link .nvm
-    source ~/.nvm/nvm.sh
 else
     echo nvm installed, version:
     nvm --version
