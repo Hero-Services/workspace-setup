@@ -9,7 +9,7 @@ git config --global core.excludesfile ~/.gitignore
 echo *.DS_Store >> ~/.gitignore
 
 # terminal settings | create bash_profile
-cat bash_profile.sh > ~/.bash_profile.sh
+cat bash_profile > ~/.bash_profile
 # initialize bash_profile
 source ~/.bash_profile
 
