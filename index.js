@@ -1,30 +1,48 @@
 #!/usr/bin/env node
- 
+
 /**
  * Module dependencies.
  */
 
-var co = require('co');
-var prompt = require('co-prompt');
 var program = require('commander');
- 
+var inquirer = require('inquirer');
+
+// run setup program
 program
   .version('1.0.0')
   .option('-a, --all', 'Add All')
-  .option('-t, --tools', 'Tools Only')
-.action(function(file) {
-    co(function *() {
-        var username = yield prompt('username: ');
-        var password = yield prompt.password('password: ');
-       
-        console.log('user: %s pass: %s file: %s',
-        program.username, program.password, file);
-        username, password, file);
-    });
+  .option('-t, --devtools', 'Tools Only')
+  .action(function() {
+      inquirer
+          .prompt([
+            {
+              type: 'list',
+              name: 'theme',
+              message: 'What do you want to do?',
+              choices: [
+                'Order a pizza',
+                'Make a reservation',
+                new inquirer.Separator(),
+                'Ask for opening hours',
+                {
+                  name: 'Contact support',
+                  disabled: 'Unavailable at this time'
+                },
+                'Talk to the receptionist'
+              ]
+            },
+            {
+              type: 'list',
+              name: 'size',
+              message: 'What size do you need?',
+              choices: ['Jumbo', 'Large', 'Standard', 'Medium', 'Small', 'Micro'],
+              filter: function(val) {
+                return val.toLowerCase();
+              }
+            }
+          ])
+          .then(answers => {
+            console.log(JSON.stringify(answers, null, '  '));
+          });
   })
-  // .parse(process.argv);
-
- 
-console.log('default');
-if (program.all) console.log('add all');
-if (program.tools) console.log('add tools only');
+  .parse(process.argv);
