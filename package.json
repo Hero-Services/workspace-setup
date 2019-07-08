@@ -1,0 +1,27 @@
+{
+  "name": "workspace-setup",
+  "version": "1.0.0",
+  "description": "Script for installing packages on a new device.",
+  "main": "index.js",
+  "bin": {
+    "setup": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/19TT94/workspace-setup.git"
+  },
+  "author": "Taylor Tobin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/19TT94/workspace-setup/issues"
+  },
+  "homepage": "https://github.com/19TT94/workspace-setup#readme",
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "commander": "^2.20.0"
+  }
+}
