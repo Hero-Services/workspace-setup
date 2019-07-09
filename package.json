@@ -20,10 +20,9 @@
   },
   "homepage": "https://github.com/19TT94/workspace-setup#readme",
   "dependencies": {
-    "co": "^4.6.0",
-    "co-fs": "^1.2.0",
-    "co-prompt": "^1.0.0",
     "commander": "^2.20.0",
-    "inquirer": "^6.4.1"
+    "fs": "0.0.1-security",
+    "inquirer": "^6.4.1",
+    "shelljs": "^0.8.3"
   }
 }

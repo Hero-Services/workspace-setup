@@ -6,6 +6,7 @@
 
 var program = require('commander');
 var inquirer = require('inquirer');
+var shell = require('shelljs');
 
 // run setup program
 program
@@ -20,29 +21,44 @@ program
               name: 'selection',
               message: 'What do you want to do?',
               choices: [
-                'Install Everything',
-                'Only Install DevTools'
+                'Install everthing.',
+                'Install everything except the configuration files (.bash_profile, .nvm ...).',
+                'Install devtools and configuration files.'
+                'Only install devtools (node, npm, nvm, ember, vue, ...).'
               ]
             }
           ])
           .then(answers => {
             console.log(JSON.stringify(answers, null, '  '));
 
-            inquirer
-                .prompt([
-                    {
-                      type: 'list',
-                      name: 'choices',
-                      message: 'Select options to ignore (if any)',
-                      choices: ['Jumbo', 'Large', 'Standard', 'Medium', 'Small', 'Micro'],
-                      filter: function(val) {
-                        return val.toLowerCase();
-                      }
-                    }
-                ])
-                .then(answers => {
-                    
-                })
-          });
+            if(answers === 'Install everthing.') {
+                inquirer
+                    .prompt([
+                        {
+                          type: 'list',
+                          name: 'configuration',
+                          message: 'Select options to ignore (if any)',
+                          choices: ['.gitignore', '.bash_profile', '.bashrc', '.', '.nvm', '.tmux', '.vimrc', 'pathogen', 'NERDTree']
+                        }
+                    ])
+                    .then(answers => {
+                        // shell.exec();
+                    })
+                });
+            } else {
+                inquirer
+                    .prompt([
+                        {
+                          type: 'list',
+                          name: 'configuration',
+                          message: 'Select options to ignore (if any)',
+                          choices: ['Jumbo', 'Large', 'Standard', 'Medium', 'Small', 'Micro']
+                        }
+                    ])
+                    .then(answers => {
+                        // shell.exec();
+                    })
+                });
+            }
   })
   .parse(process.argv);

@@ -9,8 +9,6 @@ echo running scripts ...
 
 ./settings.sh
 
-./developer-tools.sh
+./devtools.sh
 
-./virtual-box.sh
-
-./install-apps.sh
+./apps.sh
