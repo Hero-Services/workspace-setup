@@ -106,7 +106,7 @@ program
                                             }
                                         ])
                                         .then(answers => {
-\                                            // overwrite current file
+                                            // overwrite current file
                                             if (answers.overwrite === 'overwrite') {
                                                 shell.exec('git config --global core.excludesfile ~/.gitignore');
                                                 shell.exec('echo *.DS_Store >> ~/.gitignore');
