@@ -4,293 +4,200 @@
  * Module dependencies.
  */
 
-var program = require('commander');
-var inquirer = require('inquirer');
-var shell = require('shelljs');
-var fs = require("fs");
+const program = require('commander');
+const inquirer = require('inquirer');
+const { prompt } = require('inquirer');
+const shell = require('shelljs');
+const fs = require("fs");
 
 // run setup program
 program
-    .version('1.0.0')
-    .option('-a, --all', 'Add All')
-    .option('-t, --devtools', 'Tools Only')
-    .action(function() {
+    .version('1.0.0', '-v, --version')
+    .option('-a, --all', 'add everything')
+    .option('-t, --devtools', 'tools only')
+    .parse(process.argv);
 
-        var response = choose_install();
+// async function to wait for response from user
+(async () => {
+    var response = await choose_install();
 
-        if(response.selection === 'Install everthing.' ||
-            response.selection === 'Install devtools and configuration files, no extra apps.') {
-
-            // install_config();
-            // install_devtools();
-            // install_apps();
-        }
-
-        if(response.selection === 'Install everthing.' ||
-            response.selection === 'Install devtools and configuration files, no extra apps.'
-            response.selection === '')
-
-        })
-        .parse(process.argv);
-
+    if(response === 'Install everthing.') {
+        await install_config();
+        // await install_devtools();
+    }
+})()
 
 async function choose_install() {
-    let response = await inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'selection',
-                message: 'What do you want to do?',
-                choices: [
-                    'Install everthing.',
-                    'Install everything except the configuration files (.bash_profile, .nvm ...).',
-                    'Install devtools and configuration files, no extra apps.',
-                    'Only install devtools (node, npm, nvm, ember, vue, ...).'
-                ]
-            }
-        ]);
+    const response = await prompt([
+        {
+            type: 'list',
+            name: 'selection',
+            message: 'What do you want to do?',
+            choices: [
+                'Install everthing.',
+                'Install everything except the configuration files (.bash_profile, .nvm ...).',
+                'Install devtools and configuration files, no extra apps.',
+                'Only install devtools (node, npm, nvm, ember, vue, ...).'
+            ]
+        }
+    ]);
 
-    return response;
+    return response.selection;
 }
 
 async function install_config() {
     // check with user for whether any installs should be excluded
-    await inquirer
-        .prompt([
-            {
-                type: 'checkbox',
-                name: 'config',
-                message: 'Unselect any options to ignore',
-                choices: [
-                    {
-                        name: 'gitignore',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'bash_profile',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'bashrc',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'nvm',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'tmux',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'vimrc',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'pathogen',
-                        checked: 'true'
-                    },
-                    {
-                        name: 'NERDTree',
-                        checked: 'true'
-                    }
-                ]
-            }
-        ])
-        .then(answers => {
-            // go through config files other than selected exclusions
-            for(var i=0; i < answers.config.length; i++) {
-                let file = '~/.' + answers.config[i];
+    const response = await prompt([
+        {
+            type: 'checkbox',
+            name: 'config',
+            message: 'Unselect any options to ignore',
+            choices: [
+                {
+                    name: 'gitignore',
+                    checked: 'true'
+                },
+                {
+                    name: 'bash_profile',
+                    checked: 'true'
+                },
+                {
+                    name: 'bashrc',
+                    checked: 'true'
+                },
+                {
+                    name: 'nvm',
+                    checked: 'true'
+                },
+                {
+                    name: 'tmux',
+                    checked: 'true'
+                },
+                {
+                    name: 'vimrc',
+                    checked: 'true'
+                },
+                {
+                    name: 'pathogen',
+                    checked: 'true'
+                },
+                {
+                    name: 'NERDTree',
+                    checked: 'true'
+                }
+            ]
+        }
+    ])
 
-                // check for gitignore
-                if (answers.config[i] === 'gitignore' && !shell.test('-e', file)) {
+    // go through config files other than selected exclusions
+    for(var i=0; i < response.config.length; i++) {
+        let file = '~/.' + response.config[i];
+        // check for gitignore
+        if (response.config[i] === 'gitignore') {
+            if (!shell.test('-e', file)) {
+                console.log("install gitignore");
+                // shell.exec('git config --global core.excludesfile ~/.gitignore');
+                // shell.exec('echo *.DS_Store >> ~/.gitignore');
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .gitignore?')) {
+                    console.log("overwrite");
                     // shell.exec('git config --global core.excludesfile ~/.gitignore');
                     // shell.exec('echo *.DS_Store >> ~/.gitignore');
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File exists: Overwrite .gitignore?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'Y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // shell.exec('git config --global core.excludesfile ~/.gitignore');
-                                // shell.exec('echo *.DS_Store >> ~/.gitignore');
-                            }
-                        });
                 }
-
-                // check for bash profile
-                if (answers.config[i] === 'bash_profile' && !shell.test('-e', file)) {
+            }
+        }
+        // check for bash profile
+        if (response.config[i] === 'bash_profile') {
+            if (!shell.test('-e', file)) {
+                console.log("install bash_profile");
+                // terminal settings | create bash_profile
+                // shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
+                // initialize bash_profile
+                // shell.exec('source ~/.bash_profile');
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .bash_profile?')) {
+                    console.log("overwrite");
                     // terminal settings | create bash_profile
                     // shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
                     // initialize bash_profile
                     // shell.exec('source ~/.bash_profile');
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File exists: Overwrite .bash_profile?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // terminal settings | create bash_profile
-                                // shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
-                                // initialize bash_profile
-                                // shell.exec('source ~/.bash_profile');
-                            }
-                        });
                 }
-
-                // check for bashrc
-                if (answers.config[i] === 'bashrc' && !shell.test('-e', file)) {
+            }
+        }
+        // check for bashrc
+        if (response.config[i] === 'bashrc') {
+            if (!shell.test('-e', file)) {
+                console.log("install bashrc");
+                // terminal settings | create bash_profile
+                // shell.exec('cat ./tools/bashrc > ~/.bashrc');
+                // initialize bash_profile
+                // shell.exec('source ~/.bashrc');
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .bashrc?')) {
+                    console.log('overwrite');
                     // terminal settings | create bash_profile
                     // shell.exec('cat ./tools/bashrc > ~/.bashrc');
                     // initialize bash_profile
                     // shell.exec('source ~/.bashrc');
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File Exists: Overwrite .bashrc?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // terminal settings | create bash_profile
-                                // shell.exec('cat ./tools/bashrc > ~/.bashrc');
-                                // initialize bash_profile
-                                // shell.exec('source ~/.bashrc');
-                            }
-                        });
                 }
-
-                // check for nvm config
-                if (answers.config[i] === 'nvm' && !shell.test('-e', file)) {
+            }
+        }
+        // check for nvm config
+        if (response.config[i] === 'nvm') {
+            if (!shell.test('-e', file)) {
+                console.log("install nvm");
+                // create nvm directory
+                // shell.exec('mkdir ~/.nvm');
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .nvm?')) {
+                    console.log('overwrite');
                     // create nvm directory
                     // shell.exec('mkdir ~/.nvm');
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File Exists: Overwrite .nvm?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // create nvm directory
-                                // shell.exec('mkdir ~/.nvm');
-                            }
-                        });
                 }
-
-                // check for tmux config
-                if (answers.config[i] === 'tmux' && !shell.test('-e', file)) {
+            }
+        }
+        // check for tmux config
+        if (response.config[i] === 'tmux') {
+            if(!shell.test('-e', file)) {
+                console.log("install tmux");
+                // tmux settings | create tmux.conf
+                // shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
+                // initialize .tmux.conf
+                // tmux source-file ~/.tmux.conf
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .tmux?')) {
+                    console.log('overwrite');
                     // tmux settings | create tmux.conf
                     // shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
                     // initialize .tmux.conf
                     // tmux source-file ~/.tmux.conf
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File Exists: Overwrite .tmux?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // tmux settings | create tmux.conf
-                                // shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
-                                // initialize .tmux.conf
-                                // tmux source-file ~/.tmux.conf
-                            }
-                        });
                 }
-
-                // check for vimrc config
-                if (answers.config[i] === 'vimrc' && !shell.test('-e', file)) {
+            }
+        }
+        // check for vimrc config
+        if (response.config[i] === 'vimrc') {
+            if (!shell.test('-e', file)) {
+                console.log("install vimrc");
+                // vim settings | create .vimrc
+                // shell.exec('touch .vimrc');
+                // copy over .vimrc
+                // shell.exec('cat .vimrc > ~/.vimrc');
+                // vim package manager ~ pathogen
+                // shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+                // curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim');
+                // install NERDTree
+                // shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
+                // link .vimrc
+                // shell.exec('source ~/.vimrc');
+            } else {
+                console.log("file exists");
+                if(await overwrite('File exists: Overwrite .vimrc?')) {
+                    console.log('overwrite');
                     // vim settings | create .vimrc
                     // shell.exec('touch .vimrc');
                     // copy over .vimrc
@@ -302,68 +209,68 @@ async function install_config() {
                     // shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
                     // link .vimrc
                     // shell.exec('source ~/.vimrc');
-                } else {
-                    // file exists
-                    inquirer
-                        .prompt([
-                            {
-                                type: 'expand',
-                                message: 'File Exists: Overwrite .vimrc?',
-                                name: 'overwrite',
-                                choices: [
-                                    {
-                                        key: 'y',
-                                        name: 'Overwrite',
-                                        value: 'overwrite'
-                                    },
-                                    {
-                                        key: 'n',
-                                        name: 'Skip',
-                                        value: 'skip'
-                                    }
-                                ]
-                            }
-                        ])
-                        .then(answers => {
-                            // overwrite current file
-                            if (answers.overwrite === 'overwrite') {
-                                // vim settings | create .vimrc
-                                // shell.exec('touch .vimrc');
-                                // copy over .vimrc
-                                // shell.exec('cat .vimrc > ~/.vimrc');
-                                // vim package manager ~ pathogen
-                                // shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-                                // curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim');
-                                // install NERDTree
-                                // shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
-                                // link .vimrc
-                                // shell.exec('source ~/.vimrc');
-                            }
-                        });
                 }
             }
-        })
+        }
+    }
+
+    async function overwrite(message) {
+        const response = await prompt([
+            {
+                type: 'expand',
+                message: message,
+                name: 'overwrite',
+                choices: [
+                    {
+                        key: 'Y',
+                        name: 'Overwrite',
+                        value: 'overwrite'
+                    },
+                    {
+                        key: 'n',
+                        name: 'Skip',
+                        value: 'skip'
+                    }
+                ]
+            }
+        ])
+
+        return response.overwrite === 'overwrite';
+    }
 }
 
-async function install_devtools() {
+function install_devtools() {
     // install devtools
-    inquirer
-        .prompt([
+    async function install_config() {
+        // check with user for whether any installs should be excluded
+        const response = await prompt([
             {
                 type: 'checkbox',
                 name: 'config',
                 message: 'Unselect any options to ignore',
                 choices: [
                     {
-                        name: 'gitignore',
+                        name: 'xcode-select',
                         checked: 'true'
                     },
                     {
-                        name: 'bash_profile',
+                        name: 'homebrew',
                         checked: 'true'
                     },
                     {
-                        name: 'bashrc',
+                        name: 'homebrew cask',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'node',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'php',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'python',
                         checked: 'true'
                     },
                     {
@@ -371,25 +278,220 @@ async function install_devtools() {
                         checked: 'true'
                     },
                     {
-                        name: 'tmux',
+                        name: 'npm',
                         checked: 'true'
                     },
                     {
-                        name: 'vimrc',
+                        name: 'yarn',
                         checked: 'true'
                     },
                     {
-                        name: 'pathogen',
+                        name: 'bower',
                         checked: 'true'
                     },
                     {
-                        name: 'NERDTree',
+                        name: 'composer',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'ember',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'vue',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'angular',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'react',
+                        checked: 'true'
+                    },
+                    {
+                        name: 'laravel',
                         checked: 'true'
                     }
                 ]
             }
         ])
-        .then(answers => {
 
-        });
+        let installed = [];
+        let exist = [];
+
+        // go through config files other than selected exclusions
+        for(var i=0; i < response.config.length; i++) {
+            let file = '~/.' + response.config[i];
+            // install xcode-select
+            if (response.config[i] === 'xcode-select') {
+                if (shell.exec('! command xcode-select -v > /dev/null')) {
+                    shell.exec('xcode-select --install');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install homebrew
+            if (response.config[i] === 'homebrew') {
+                if (shell.exec('! command brew -v > /dev/null')) {
+                    shell.exec('/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install homebrew cask
+            if (response.config[i] === 'homebrew cask') {
+                if (shell.exec('! brew info cask &>/dev/null')) {
+                    shell.exec('brew cask');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install node
+            if (response.config[i] === 'node') {
+                if (shell.exec('! command node -v > /dev/null')) {
+                    shell.exec('brew install node');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install php
+            if (response.config[i] === 'php') {
+                if (shell.exec('! command php -v > /dev/null')) {
+                    shell.exec('brew install php70');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install python
+            if (response.config[i] === 'python') {
+                if (shell.exec('! command python --version > /dev/null')) {
+                    shell.exec('brew install python');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install nvm
+            if (response.config[i] === 'nvm') {
+                if (shell.exec('! command nvm --version > /dev/null')) {
+                    shell.exec('brew install nvm');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install npm
+            if (response.config[i] === 'npm') {
+                if (shell.exec('! command npm -v > /dev/null')) {
+                    shell.exec('brew install npm');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install yarn
+            if (response.config[i] === 'yarn') {
+                if (shell.exec('! command yarn -v > /dev/null')) {
+                    shell.exec('brew install yarn');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install bower
+            if (response.config[i] === 'bower') {
+                if (shell.exec('! command bower -v > /dev/null')) {
+                    shell.exec('brew install bower');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install composer
+            if (response.config[i] === 'composer') {
+                if (shell.exec('! command composer --version > /dev/null')) {
+                    shell.exec('brew install composer');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install ember
+            if (response.config[i] === 'ember') {
+                if (shell.exec('! command ember --version > /dev/null')) {
+                    shell.exec('npm install -g ember-cli');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install vue
+            if (response.config[i] === 'vue') {
+                if (shell.exec('! command vue --version > /dev/null')) {
+                    shell.exec('npm install -g @vue/cli');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install angular
+            if (response.config[i] === 'angular') {
+                if (shell.exec('! command ng --version > /dev/null')) {
+                    shell.exec('npm install -g @angular/cli');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+            // install laravel
+            if (response.config[i] === 'laravel') {
+                shell.exec('composer global require "laravel/installer"');
+            }
+            // tmux
+            if (response.config[i] === 'tmux') {
+                if (shell.exec('!type tmux >/dev/null 2>/dev/null')) {
+                    shell.exec('brew install tmux');
+                    // update installed
+                    installed.push(response.config[i])
+                } else {
+                    // update exist
+                    exist.push(response.config[i])
+                }
+            }
+        }
+    }
 }

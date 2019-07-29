@@ -27,14 +27,6 @@ else
     brew -v
 fi
 
-# Install Tmux
-if type tmux >/dev/null 2>/dev/null; then
-    echo tmux already installed
-else
-    echo Installing tmux ...
-    brew install tmux
-fi
-
 # Install Homebrew Cask
 if ! brew info cask &>/dev/null; then
     echo installing brew cask ...
@@ -52,6 +44,12 @@ else
     echo node installed, version:
     node -v
 fi
+
+# Install Latest PHP
+brew install php70
+
+# Install Latest Python
+brew install python
 
 # Install Node Version Manager (NVM)
 if ! command nvm --version > /dev/null; then
@@ -89,6 +87,15 @@ else
     bower -v
 fi
 
+# Install Composer
+if ! command composer --version > /dev/null; then
+    echo Installing composer ...
+    brew install composer
+else
+    echo composer installed, version:
+    composer --version
+fi
+
 # Install Ember
 if ! command ember -v > /dev/null; then
     echo Installing ember ...
@@ -107,23 +114,16 @@ else
     vue --version
 fi
 
-# Install Latest PHP
-brew install php70
-
-# Install Composer
-if ! command composer --version > /dev/null; then
-    echo Installing composer ...
-    brew install composer
-else
-    echo composer installed, version:
-    composer --version
-fi
-
-# Install Latest Python
-brew install python
-
 # Install Laravel
 composer global require "laravel/installer"
+
+# Install Tmux
+if type tmux >/dev/null 2>/dev/null; then
+    echo tmux already installed
+else
+    echo Installing tmux ...
+    brew install tmux
+fi
 
 echo ###
 echo ###
