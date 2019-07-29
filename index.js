@@ -9,6 +9,8 @@ const inquirer = require('inquirer');
 const { prompt } = require('inquirer');
 const shell = require('shelljs');
 const fs = require("fs");
+const ora = require('ora');
+const spinner = ora('spinning');
 
 // run setup program
 program
@@ -57,6 +59,7 @@ async function choose_install() {
                 'install everthing.',
                 'install everything except the configuration files (.bash_profile, .nvm ...).',
                 'install devtools and configuration files (no extra apps).',
+                'install devtools only (node, npm, nvm, ember, vue, ...).',
                 'install apps only (slack, atom, vscode, sequel-pro ...).'
             ]
         }
@@ -115,120 +118,107 @@ async function install_config() {
         // check for gitignore
         if (response.config[i] === 'gitignore') {
             if (!shell.test('-e', file)) {
-                console.log("install gitignore");
-                // shell.exec('git config --global core.excludesfile ~/.gitignore');
-                // shell.exec('echo *.DS_Store >> ~/.gitignore');
+                shell.exec('git config --global core.excludesfile ~/.gitignore');
+                shell.exec('echo *.DS_Store >> ~/.gitignore');
             } else {
-                console.log("file exists");
                 if(await overwrite('File exists: Overwrite .gitignore?')) {
-                    console.log("overwrite");
-                    // shell.exec('git config --global core.excludesfile ~/.gitignore');
-                    // shell.exec('echo *.DS_Store >> ~/.gitignore');
+                    shell.exec('git config --global core.excludesfile ~/.gitignore');
+                    shell.exec('echo *.DS_Store >> ~/.gitignore');
                 }
             }
         }
         // check for bash profile
         if (response.config[i] === 'bash_profile') {
             if (!shell.test('-e', file)) {
-                console.log("install bash_profile");
                 // terminal settings | create bash_profile
-                // shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
+                shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
                 // initialize bash_profile
-                // shell.exec('source ~/.bash_profile');
+                shell.exec('source ~/.bash_profile');
             } else {
                 console.log("file exists");
                 if(await overwrite('File exists: Overwrite .bash_profile?')) {
                     console.log("overwrite");
                     // terminal settings | create bash_profile
-                    // shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
+                    shell.exec('cat ./tools/bash_profile > ~/.bash_profile');
                     // initialize bash_profile
-                    // shell.exec('source ~/.bash_profile');
+                    shell.exec('source ~/.bash_profile');
                 }
             }
         }
         // check for bashrc
         if (response.config[i] === 'bashrc') {
             if (!shell.test('-e', file)) {
-                console.log("install bashrc");
                 // terminal settings | create bash_profile
-                // shell.exec('cat ./tools/bashrc > ~/.bashrc');
+                shell.exec('cat ./tools/bashrc > ~/.bashrc');
                 // initialize bash_profile
-                // shell.exec('source ~/.bashrc');
+                shell.exec('source ~/.bashrc');
             } else {
                 console.log("file exists");
                 if(await overwrite('File exists: Overwrite .bashrc?')) {
-                    console.log('overwrite');
                     // terminal settings | create bash_profile
-                    // shell.exec('cat ./tools/bashrc > ~/.bashrc');
+                    shell.exec('cat ./tools/bashrc > ~/.bashrc');
                     // initialize bash_profile
-                    // shell.exec('source ~/.bashrc');
+                    shell.exec('source ~/.bashrc');
                 }
             }
         }
         // check for nvm config
         if (response.config[i] === 'nvm') {
             if (!shell.test('-e', file)) {
-                console.log("install nvm");
                 // create nvm directory
-                // shell.exec('mkdir ~/.nvm');
+                shell.exec('mkdir ~/.nvm');
             } else {
-                console.log("file exists");
                 if(await overwrite('File exists: Overwrite .nvm?')) {
-                    console.log('overwrite');
                     // create nvm directory
-                    // shell.exec('mkdir ~/.nvm');
+                    shell.exec('mkdir ~/.nvm');
                 }
             }
         }
         // check for tmux config
         if (response.config[i] === 'tmux') {
             if(!shell.test('-e', file)) {
-                console.log("install tmux");
                 // tmux settings | create tmux.conf
-                // shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
+                shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
                 // initialize .tmux.conf
-                // tmux source-file ~/.tmux.conf
+                shell.exec('tmux source-file ~/.tmux.conf');
             } else {
-                console.log("file exists");
                 if(await overwrite('File exists: Overwrite .tmux?')) {
                     console.log('overwrite');
                     // tmux settings | create tmux.conf
-                    // shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
+                    shell.exec('cat ./tools/tmux.conf > ~/.tmux.conf');
                     // initialize .tmux.conf
-                    // tmux source-file ~/.tmux.conf
+                    shell.exec('tmux source-file ~/.tmux.conf');
                 }
             }
         }
         // check for vimrc config
         if (response.config[i] === 'vimrc') {
             if (!shell.test('-e', file)) {
-                console.log("install vimrc");
                 // vim settings | create .vimrc
-                // shell.exec('touch .vimrc');
+                shell.exec('touch .vimrc');
                 // copy over .vimrc
-                // shell.exec('cat .vimrc > ~/.vimrc');
+                shell.exec('cat .vimrc > ~/.vimrc');
                 // vim package manager ~ pathogen
-                // shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+                shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
                 // curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim');
                 // install NERDTree
-                // shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
+                shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
                 // link .vimrc
-                // shell.exec('source ~/.vimrc');
+                shell.exec('source ~/.vimrc');
             } else {
                 console.log("file exists");
                 if(await overwrite('File exists: Overwrite .vimrc?')) {
-                    console.log('overwrite');
                     // vim settings | create .vimrc
-                    // shell.exec('touch .vimrc');
+                    shell.exec('touch .vimrc');
                     // copy over .vimrc
-                    // shell.exec('cat .vimrc > ~/.vimrc');
+                    shell.exec('cat .vimrc > ~/.vimrc');
                     // vim package manager ~ pathogen
-                    // shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+                    shell.exec('mkdir -p ~/.vim/autoload ~/.vim/bundle && \
                     // curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim');
                     // install NERDTree
-                    // shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
+                    shell.exec('git clone https://github.com/scrooloose/nerdtree.git ~/.vim/bundle/nerdtree');
                     // link .vimrc
-                    // shell.exec('source ~/.vimrc');
+                    shell.exec('source ~/.vimrc');
                 }
             }
         }
@@ -588,6 +578,9 @@ async function install_apps() {
     let installed = [];
     let exist = [];
 
+    spinner.text = "Installing apps ...";
+    spinner.start();
+
     // go through config files other than selected exclusions
     for(var i=0; i < response.config.length; i++) {
         // install slack
@@ -729,3 +722,5 @@ async function install_apps() {
     console.log("installed");
     console.log(installed);
 }
+
+console.log("Complete!");

@@ -14,3 +14,7 @@ alias home='cd ~/Desktop'
 # Application Commands
 alias server='python3 -m http.server'
 alias open='open .'
+alias atom='atom .'
+alias code='code .'
+
+export PATH="/usr/local/sbin:$PATH"
