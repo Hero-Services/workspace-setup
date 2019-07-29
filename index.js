@@ -21,14 +21,30 @@ program
 (async () => {
     var response = await choose_install();
 
-    if(response === 'Install everthing.') {
+    if (response === 'install everthing.') {
+        await install_config();
+        await install_devtools();
+        await install_apps();
+    }
+
+    if (response === 'install everything except the configuration files (.bash_profile, .nvm ...).') {
+        await install_devtools();
+        await install_apps();
+    }
+
+    if (response === 'install devtools and configuration files (no extra apps).') {
         await install_config();
         await install_devtools();
     }
 
-    if(response === 'Install everything except the configuration files (.bash_profile, .nvm ...).') {
+    if (response === 'install devtools only (node, npm, nvm, ember, vue, ...).') {
         await install_devtools();
     }
+
+    if (response === 'install apps only (slack, atom, vscode, sequel-pro ...).') {
+        await install_apps();
+    }
+
 })()
 
 async function choose_install() {
@@ -38,10 +54,10 @@ async function choose_install() {
             name: 'selection',
             message: 'What do you want to do?',
             choices: [
-                'Install everthing.',
-                'Install everything except the configuration files (.bash_profile, .nvm ...).',
-                'Install devtools and configuration files, no extra apps.',
-                'Only install devtools (node, npm, nvm, ember, vue, ...).'
+                'install everthing.',
+                'install everything except the configuration files (.bash_profile, .nvm ...).',
+                'install devtools and configuration files (no extra apps).',
+                'install apps only (slack, atom, vscode, sequel-pro ...).'
             ]
         }
     ]);
@@ -329,7 +345,6 @@ async function install_devtools() {
         if (response.config[i] === 'xcode-select') {
             if (shell.exec('node --version', { silent: true }).code != 0) {
                 shell.exec('xcode-select --install');
-                console.log("install");
                 // update installed
                 installed.push(response.config[i])
             } else {
@@ -495,6 +510,211 @@ async function install_devtools() {
         if (response.config[i] === 'tmux') {
             if (shell.exec('tmux -V', { silent: true }).code != 0) {
                 shell.exec('brew install tmux');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+    }
+
+    console.log("already installed");
+    console.log(exist);
+    console.log("installed");
+    console.log(installed);
+}
+
+async function install_apps() {
+    // check with user for whether any installs should be excluded
+    const response = await prompt([
+        {
+            type: 'checkbox',
+            name: 'config',
+            message: 'Unselect any options to ignore',
+            choices: [
+                {
+                    name: 'slack',
+                    checked: 'true'
+                },
+                {
+                    name: 'atom',
+                    checked: 'true'
+                },
+                {
+                    name: 'vscode',
+                    checked: 'true'
+                },
+                {
+                    name: 'sequel pro',
+                    checked: 'true'
+                },
+                {
+                    name: 'spotify',
+                    checked: 'true'
+                },
+                {
+                    name: 'android studio',
+                    checked: 'true'
+                },
+                {
+                    name: 'google chrome',
+                    checked: 'true'
+                },
+                {
+                    name: 'brave',
+                    checked: 'true'
+                },
+                {
+                    name: 'mark text',
+                    checked: 'true'
+                },
+                {
+                    name: 'iterm2',
+                    checked: 'true'
+                },
+                {
+                    name: 'sketch',
+                    checked: 'true'
+                },
+                {
+                    name: '1password',
+                    checked: 'true'
+                }
+            ]
+        }
+    ])
+
+    let installed = [];
+    let exist = [];
+
+    // go through config files other than selected exclusions
+    for(var i=0; i < response.config.length; i++) {
+        // install slack
+        if (response.config[i] === 'slack') {
+            if (shell.exec('brew cask info slack', { silent: true }).code != 0) {
+                shell.exec('brew cask install slack');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install atom
+        if (response.config[i] === 'atom') {
+            if (shell.exec('brew cask info atom', { silent: true }).code != 0) {
+                shell.exec('brew cask install atom');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install vscode
+        if (response.config[i] === 'vscode') {
+            if (shell.exec('brew cask info visual-studio-code', { silent: true }).code != 0) {
+                shell.exec('brew cask install visual-studio-code');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install sequel-pro
+        if (response.config[i] === 'sequel-pro') {
+            if (shell.exec('brew cask info sequel-pro', { silent: true }).code != 0) {
+                shell.exec('brew cask install sequel-pro');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install spotify
+        if (response.config[i] === 'spotify') {
+            if (shell.exec('brew cask info spotify', { silent: true }).code != 0) {
+                shell.exec('brew cask install spotify');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install android-studio
+        if (response.config[i] === 'android-studio') {
+            if (shell.exec('brew cask info android-studio', { silent: true }).code != 0) {
+                shell.exec('brew cask install android-studio');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install google-chrome
+        if (response.config[i] === 'google-chrome') {
+            if (shell.exec('brew cask info google-chrome', { silent: true }).code != 0) {
+                shell.exec('brew cask install google-chrome');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install brave-browser
+        if (response.config[i] === 'brave-browser') {
+            if (shell.exec('brew cask info brave-browser', { silent: true }).code != 0) {
+                shell.exec('brew cask install brave-browser');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install mark-text
+        if (response.config[i] === 'mark-text') {
+            if (shell.exec('brew cask info mark-text', { silent: true }).code != 0) {
+                shell.exec('brew cask install mark-text');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install one password
+        if (response.config[i] === '1password') {
+            if (shell.exec('brew cask info 1password', { silent: true }).code != 0) {
+                shell.exec('brew cask install 1password');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install iterm2
+        if (response.config[i] === 'iterm2') {
+            if (shell.exec('brew cask info iterm2', { silent: true }).code != 0) {
+                shell.exec('brew cask install iterm2');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install sketch
+        if (response.config[i] === 'sketch') {
+            if (shell.exec('brew cask info sketch', { silent: true }).code != 0) {
+                shell.exec('brew cask install sketch');
                 // update installed
                 installed.push(response.config[i])
             } else {
