@@ -56,7 +56,9 @@ program
             await install_apps();
         }
 
-        console.log("\n Complete!");
+        console.log("\n Complete! \n");
+
+        await keep();
 
     }, 1000);
 })()
@@ -78,4 +80,33 @@ async function choose_install() {
     ]);
 
     return response.selection;
+}
+
+async function keep() {
+    const response = await prompt([
+        {
+            type: 'expand',
+            message: 'Do you want to keep workspace-setup installed?',
+            name: 'selection',
+            choices: [
+                {
+                    key: 'Y',
+                    name: 'Keep',
+                    value: 'keep'
+                },
+                {
+                    key: 'n',
+                    name: 'Delete',
+                    value: 'delete'
+                }
+            ]
+        }
+    ])
+
+    if(response.selection === "delete") {
+        shell.exec('cd ..');
+        shell.exec('rm -rf workspace-setup');
+    } else {
+        console.log('\n Your workspace is setup.');
+    }
 }
