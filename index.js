@@ -47,6 +47,8 @@ program
         await install_apps();
     }
 
+    console.log("Complete!");
+
 })()
 
 async function choose_install() {
@@ -578,8 +580,8 @@ async function install_apps() {
     let installed = [];
     let exist = [];
 
-    spinner.text = "Installing apps ...";
-    spinner.start();
+    // spinner.text = "Installing apps ...";
+    // spinner.start();
 
     // go through config files other than selected exclusions
     for(var i=0; i < response.config.length; i++) {
@@ -722,5 +724,3 @@ async function install_apps() {
     console.log("installed");
     console.log(installed);
 }
-
-console.log("Complete!");
