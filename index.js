@@ -60,7 +60,7 @@ program
 
         await keep();
 
-    }, 1000);
+    }, 500);
 })()
 
 async function choose_install() {
@@ -86,26 +86,26 @@ async function keep() {
     const response = await prompt([
         {
             type: 'expand',
-            message: 'Do you want to keep workspace-setup installed?',
+            message: 'Do you want to DELETE workspace-setup?',
             name: 'selection',
             choices: [
                 {
                     key: 'Y',
-                    name: 'Keep',
-                    value: 'keep'
+                    name: 'Delete',
+                    value: 'delete'
                 },
                 {
                     key: 'n',
-                    name: 'Delete',
-                    value: 'delete'
+                    name: 'Keep',
+                    value: 'keep'
                 }
             ]
         }
     ])
 
     if(response.selection === "delete") {
-        shell.exec('cd ..');
-        shell.exec('rm -rf workspace-setup');
+        shell.cd('..');
+        shell.rm('-rf', 'workspace-setup');
     } else {
         console.log('\n Your workspace is setup.');
     }
