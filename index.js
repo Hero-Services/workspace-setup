@@ -5,12 +5,8 @@
  */
 
 const program = require('commander');
-const inquirer = require('inquirer');
 const { prompt } = require('inquirer');
 const shell = require('shelljs');
-const fs = require("fs");
-const ora = require('ora');
-const spinner = ora('spinning');
 
 // install scripts
 const { install_config, install_devtools, install_apps } = require('./scripts/install');
@@ -73,7 +69,7 @@ async function choose_install() {
                 'install everthing.',
                 'install everything except the configuration files (.bash_profile, .nvm ...).',
                 'install devtools and configuration files (no extra apps).',
-                'install devtools only (node, npm, nvm, ember, vue, ...).',
+                'install devtools only (node, npm, nvm, ...).',
                 'install apps only (slack, atom, vscode, sequel-pro ...).'
             ]
         }
@@ -105,8 +101,8 @@ async function keep() {
 
     if(response.selection === "delete") {
         shell.cd('..');
-        shell.rm('-rf', 'workspace-setup');
+        shell.rm('-rf', 'sunrise-workspace-setup');
     } else {
-        console.log('\n Your workspace is setup.');
+        console.log('\n Your workspace is setup, please run `source ~/.zshrc`, reopen terminal, or open iterm to load new configuration.');
     }
 }
