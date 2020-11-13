@@ -44,11 +44,13 @@ npm install
 * react
 * laravel
 * tmux
+* catlayst
+* docker
 
 ## App Options:
 * virtualbox
 * vagrant
-* docker
+* docker desktop
 * slack
 * atom
 * vscode
