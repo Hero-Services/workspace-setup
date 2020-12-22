@@ -199,6 +199,10 @@ async function install_devtools() {
                     checked: true
                 },
                 {
+                    name: 'pip',
+                    checked: true
+                },
+                {
                     name: 'starship',
                     checked: true
                 },
@@ -308,8 +312,19 @@ async function install_devtools() {
         }
         // install python
         if (response.config[i] === 'python') {
-            if (shell.exec('python --version', { silent: true }).code != 0) {
+            if (shell.exec('python3 --version', { silent: true }).code != 0) {
                 shell.exec('brew install python');
+                // update installed
+                installed.push(response.config[i])
+            } else {
+                // update exist
+                exist.push(response.config[i])
+            }
+        }
+        // install pip
+        if (response.config[i] === 'pip') {
+            if (shell.exec('pip --version', { silent: true }).code != 0) {
+                shell.exec('curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3 get-pip.py');
                 // update installed
                 installed.push(response.config[i])
             } else {
